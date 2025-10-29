@@ -9,3 +9,6 @@ jobs:
       - run: sudo apt-get install texlive-xetex\inkscape pandoc
       - run: pip install nbconvert # automatyzacja nitebooka jupyter
       - run: python -m nbconvert --to pdf --execute test.ipynb
+      - uses: actions/upload-artifact
+        with:
+          path: test.pdf
