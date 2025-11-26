@@ -1,13 +1,12 @@
-name: sprawozdanie
+name: main
 on: push
 jobs:
-  pdf:
+  job:
     runs-on: ubuntu-22.04
     steps:
-      - run: pip install scipy pint open_atmos_jupyter_utils ipykernel
+      - run: sudo apt-get install inkscape pandoc texlive-xetex
       - uses: actions/checkout@v4
-      #- run: sudo apt-get install texlive-xetex inkscape pandoc
-      - run: pip install nbconvert # automatyzacja nitebooka jupyter
+      - run: pip install ipykernel nbconvert pint open-atmos-jupyter-utils scipy 
       - run: python -m nbconvert --to pdf --execute shallow_water.ipynb
       - uses: actions/upload-artifact@v4
         with:
