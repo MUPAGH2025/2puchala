@@ -8,7 +8,7 @@ jobs:
       - uses: actions/checkout@v4
       #- run: sudo apt-get install texlive-xetex inkscape pandoc
       - run: pip install nbconvert # automatyzacja nitebooka jupyter
-      - run: python -m nbconvert --to script --execute .github/workflows/upwind2d.ipynb
+      - run: python -m nbconvert --to script --execute .github/workflows/shallow_water.ipynb
       - uses: actions/upload-artifact@v4
         with:
           path: .github/workflows/anim.gif
