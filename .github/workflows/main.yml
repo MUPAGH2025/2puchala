@@ -4,6 +4,7 @@ jobs:
   job:
     runs-on: ubuntu-22.04
     steps:
+      - run: pip install ipykernel scipy pint open_atmos_jupyter_utils numpy PyMPDATA
       - run: sudo apt-get install inkscape pandoc texlive-xetex
       - uses: actions/checkout@v4
       - run: pip install ipykernel nbconvert pint open-atmos-jupyter-utils scipy 
