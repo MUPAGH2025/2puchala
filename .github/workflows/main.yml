@@ -12,3 +12,4 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           path: projekt1.pdf
+          exclude_input: true
