@@ -9,6 +9,34 @@ jobs:
       - uses: actions/checkout@v4
       - run: pip install ipykernel nbconvert pint open-atmos-jupyter-utils scipy 
       - run: python -m nbconvert --to pdf --execute --no-input projekt1.ipynb
+
+      - name: Fix LaTeX encoding (utf8x -> utf8) and set PDF title
+        run: |
+          python - << 'EOF'
+          import pathlib
+
+          path = pathlib.Path("raport.tex")
+          tex = path.read_text(encoding="utf-8")
+
+          # usuń ucs i zmień utf8x na zwykłe utf8
+          tex = tex.replace(r"\usepackage{ucs}", r"% \usepackage{ucs} (disabled)")
+          tex = tex.replace(r"\usepackage[utf8x]{inputenc}", r"\usepackage[utf8]{inputenc}")
+          tex = tex.replace(r"\usepackage{hyperref}", r"\usepackage[unicode]{hyperref}")
+
+          # wstrzyknięcie tytułu i metadanych PDF przed \begin{document}
+          insert = r"""
+          \title{Badanie wyskokości fali tsunami w zalezności, czy przyszła od strony rowu czy grzbietu oceanicznego}
+          \author{Łukasz Puchała}
+          \hypersetup{
+              pdftitle={Badanie wyskokości fali tsunami w zalezności, czy przyszła od strony rowu czy grzbietu oceanicznego},
+              pdfauthor={Łukasz Puchała}
+          }
+          """
+          tex = tex.replace(r"\begin{document}", insert + "\n\\begin{document}")
+
+          path.write_text(tex, encoding="utf-8")
+          EOF
+
       - uses: actions/upload-artifact@v4
         with:
           path: projekt1.pdf
