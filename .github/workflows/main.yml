@@ -10,12 +10,20 @@ jobs:
       - run: pip install ipykernel nbconvert pint open-atmos-jupyter-utils scipy 
       - run: python -m nbconvert --to pdf --execute --no-input projekt1.ipynb
 
+      - name: Convert notebook to LaTeX
+        run: |
+          jupyter nbconvert \
+            --to latex \
+            --TemplateExporter.exclude_input=True \
+            --output=raport.tex \
+            kelvin.ipynb
+
       - name: Fix LaTeX encoding (utf8x -> utf8) and set PDF title
         run: |
           python - << 'EOF'
           import pathlib
 
-          path = pathlib.Path("raport.tex")
+          path = pathlib.Path("projekt1.tex")
           tex = path.read_text(encoding="utf-8")
 
           # usuń ucs i zmień utf8x na zwykłe utf8
