@@ -1,72 +1,14 @@
 name: main
-
-on:
-  push:
-  workflow_dispatch:
-
+on: push
 jobs:
-  build:
+  job:
     runs-on: ubuntu-22.04
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - run: pip install ipykernel scipy pint open_atmos_jupyter_utils numpy PyMPDATA
+      - run: sudo apt-get install inkscape pandoc texlive-xetex
+      - uses: actions/checkout@v4
+      - run: pip install ipykernel nbconvert pint open-atmos-jupyter-utils scipy 
+      - run: python -m nbconvert --to pdf --execute --no-input "Wysokość fali tsunami przy brzegu w zależności, czy przyszła od strony rowu lub szelfu oceanicznego.ipynb"
+      - uses: actions/upload-artifact@v4
         with:
-          python-version: "3.11"
-
-      - name: Install Python dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install \
-            ipykernel \
-            nbconvert \
-            scipy \
-            pint \
-            numpy \
-            PyMPDATA \
-            open-atmos-jupyter-utils
-
-      - name: Install system dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y \
-            pandoc \
-            texlive-xetex \
-            inkscape
-
-      - name: Inject title and author into notebook metadata
-        run: |
-          python - << 'EOF'
-          import json
-
-          path = "projekt1.ipynb"
-          with open(path, encoding="utf-8") as f:
-              nb = json.load(f)
-
-          nb.setdefault("metadata", {})
-          nb["metadata"]["title"] = "Wysokość fali tsunami przy brzegu"
-          nb["metadata"]["author"] = "Łukasz Puchała"
-
-          # dodatkowo dla LaTeX
-          nb.setdefault("metadata", {}).setdefault("latex_metadata", {})
-          nb["metadata"]["latex_metadata"]["author"] = "Łukasz Puchała"
-
-          with open(path, "w", encoding="utf-8") as f:
-              json.dump(nb, f, ensure_ascii=False, indent=1)
-          EOF
-
-      - name: Execute notebook and build PDF
-        run: |
-          python -m nbconvert projekt1.ipynb \
-            --to pdf \
-            --execute \
-            --no-input
-
-      - name: Upload PDF artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: sprawko
-          path: projekt1.pdf
+          path: "Wysokość fali tsunami przy brzegu w zależności, czy przyszła od strony rowu lub szelfu oceanicznego.pdf"
