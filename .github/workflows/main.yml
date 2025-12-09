@@ -50,6 +50,10 @@ jobs:
           nb["metadata"]["title"] = "Wysokość fali tsunami przy brzegu"
           nb["metadata"]["author"] = "Łukasz Puchała"
 
+          # dodatkowo dla LaTeX
+          nb.setdefault("metadata", {}).setdefault("latex_metadata", {})
+          nb["metadata"]["latex_metadata"]["author"] = "Łukasz Puchała"
+
           with open(path, "w", encoding="utf-8") as f:
               json.dump(nb, f, ensure_ascii=False, indent=1)
           EOF
