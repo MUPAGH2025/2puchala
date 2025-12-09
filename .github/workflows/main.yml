@@ -5,11 +5,11 @@ on:
   workflow_dispatch:
 
 jobs:
-  job:
+  build:
     runs-on: ubuntu-22.04
 
     steps:
-      - name: Checkout repo
+      - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Set up Python
@@ -17,7 +17,7 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Install Python packages
+      - name: Install Python dependencies
         run: |
           python -m pip install --upgrade pip
           pip install \
@@ -37,16 +37,31 @@ jobs:
             texlive-xetex \
             inkscape
 
+      - name: Inject title and author into notebook metadata
+        run: |
+          python - << 'EOF'
+          import json
+
+          path = "projekt1.ipynb"
+          with open(path, encoding="utf-8") as f:
+              nb = json.load(f)
+
+          nb.setdefault("metadata", {})
+          nb["metadata"]["title"] = "Wysokość fali tsunami przy brzegu"
+          nb["metadata"]["author"] = "Łukasz Puchała"
+
+          with open(path, "w", encoding="utf-8") as f:
+              json.dump(nb, f, ensure_ascii=False, indent=1)
+          EOF
+
       - name: Execute notebook and build PDF
         run: |
           python -m nbconvert projekt1.ipynb \
             --to pdf \
             --execute \
-            --no-input \
-            --PDFExporter.title="Wysokość fali tsunami przy brzegu" \
-            --PDFExporter.author="Łukasz Puchała"
+            --no-input
 
-      - name: Upload artifact
+      - name: Upload PDF artifact
         uses: actions/upload-artifact@v4
         with:
           name: sprawko
